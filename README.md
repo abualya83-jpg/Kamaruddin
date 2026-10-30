@@ -41,6 +41,20 @@ Repo ini disambung ke Vercel. Setiap push ke `main` akan deploy ke production se
 branch lain mendapat Preview URL. Tetapkan env var `VITE_SUPABASE_URL` dan `VITE_SUPABASE_ANON_KEY`
 dalam Vercel → Project → Settings → Environment Variables.
 
+## Jana One Page Report dengan AI (Gemini)
+
+Butang **Jana dengan AI** dalam borang One Page Report menjana Objektif, Kekuatan Aktiviti,
+Impak Program dan Cadangan Penambahbaikan melalui fungsi server `api/jana-opr.ts`.
+
+Tetapkan dalam Vercel → Project → Settings → Environment Variables (kemudian Redeploy):
+
+| Nama | Nilai |
+|---|---|
+| `GEMINI_API_KEY` | API key dari https://aistudio.google.com/apikey (wajib) |
+| `GEMINI_MODEL` | Pilihan. Lalai: `gemini-2.5-flash` |
+
+Jangan sesekali letak API key dengan awalan `VITE_` kerana ia akan terdedah kepada umum dalam browser.
+
 ## Menambah / mengubah medan
 
 Semua modul dijana daripada konfigurasi dalam `src/modules.ts`. Untuk menambah medan:

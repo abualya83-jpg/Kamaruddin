@@ -9,7 +9,7 @@ import SignedImage from '../components/SignedImage'
 type Opr = {
   tajuk_program: string; tarikh: string; tempat: string | null; anjuran: string | null
   sasaran: string | null; bilangan_peserta: number | null; objektif: string | null
-  ringkasan_aktiviti: string | null; impak: string | null; cadangan: string | null
+  ringkasan_aktiviti: string | null; kekuatan: string | null; impak: string | null; cadangan: string | null
   disediakan_oleh: string | null; gambar: string[]
 }
 
@@ -37,7 +37,8 @@ export default function OprPrint() {
   const sections = [
     ['Objektif', opr.objektif],
     ['Ringkasan Aktiviti', opr.ringkasan_aktiviti],
-    ['Impak / Rumusan', opr.impak],
+    ['Kekuatan Aktiviti', opr.kekuatan],
+    ['Impak Program', opr.impak],
     ['Cadangan Penambahbaikan', opr.cadangan],
   ].filter(([, v]) => v)
 

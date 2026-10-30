@@ -32,6 +32,8 @@ export type ModuleConfig = {
   orderBy: { column: string; ascending: boolean }
   /** Field used for the filter dropdown and coloured badge. */
   statusField?: string
+  /** Fields the "Jana dengan AI" button fills in via /api/jana-opr. */
+  aiFields?: string[]
 }
 
 export const BILIK_PKG = [
@@ -139,13 +141,15 @@ export const modules: ModuleConfig[] = [
       { name: 'disediakan_oleh', label: 'Disediakan Oleh', type: 'text' },
       { name: 'objektif', label: 'Objektif', type: 'textarea', full: true },
       { name: 'ringkasan_aktiviti', label: 'Ringkasan Aktiviti', type: 'textarea', full: true },
-      { name: 'impak', label: 'Impak / Rumusan', type: 'textarea', full: true },
+      { name: 'kekuatan', label: 'Kekuatan Aktiviti', type: 'textarea', full: true },
+      { name: 'impak', label: 'Impak Program', type: 'textarea', full: true },
       { name: 'cadangan', label: 'Cadangan Penambahbaikan', type: 'textarea', full: true },
       { name: 'gambar', label: 'Gambar Aktiviti (maks. 4)', type: 'images', full: true },
     ],
     columns: ['tarikh', 'tajuk_program', 'tempat', 'bilangan_peserta', 'disediakan_oleh'],
     searchFields: ['tajuk_program', 'tempat', 'disediakan_oleh'],
     orderBy: { column: 'tarikh', ascending: false },
+    aiFields: ['objektif', 'kekuatan', 'impak', 'cadangan'],
   },
   {
     key: 'aset',

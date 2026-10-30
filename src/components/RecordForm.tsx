@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Loader2, X } from 'lucide-react'
+import { Loader2, Sparkles, X } from 'lucide-react'
 import type { Field, ModuleConfig } from '../modules'
 import { supabase, uploadFile, removeFiles } from '../lib/supabase'
 import { todayISO } from '../lib/format'
@@ -35,7 +35,34 @@ export default function RecordForm({ config, row, onSaved, onCancel }: {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const [generating, setGenerating] = useState(false)
+
   const set = (name: string, value: string) => setValues((v) => ({ ...v, [name]: value }))
+
+  async function generate() {
+    const targets = config.aiFields!
+    if (!values.tajuk_program?.trim()) return setError('Isi Tajuk Program dahulu sebelum menjana dengan AI.')
+    const filled = targets.filter((t) => values[t].trim())
+    if (filled.length && !confirm('Ruangan yang sudah diisi akan diganti dengan cadangan AI. Teruskan?')) return
+
+    setGenerating(true)
+    setError(null)
+    try {
+      const { data } = await supabase.auth.getSession()
+      const res = await fetch('/api/jana-opr', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', authorization: `Bearer ${data.session?.access_token ?? ''}` },
+        body: JSON.stringify(values),
+      })
+      const body = await res.json().catch(() => ({ error: 'Pelayan AI tidak memberi jawapan yang sah.' }))
+      if (!res.ok) throw new Error(body.error)
+      setValues((v) => ({ ...v, ...Object.fromEntries(targets.map((t) => [t, body[t] ?? v[t]])) }))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err))
+    } finally {
+      setGenerating(false)
+    }
+  }
 
   async function submit(e: FormEvent) {
     e.preventDefault()
@@ -88,6 +115,20 @@ export default function RecordForm({ config, row, onSaved, onCancel }: {
 
   return (
     <form onSubmit={submit} className="space-y-5">
+      {config.aiFields && (
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-violet-200 bg-violet-50 px-4 py-3">
+          <p className="text-sm text-violet-900">
+            Isi tajuk dan ringkasan aktiviti, kemudian biar AI jana{' '}
+            {config.aiFields.map((n) => config.fields.find((f) => f.name === n)!.label.toLowerCase()).join(', ')}.
+          </p>
+          <button type="button" onClick={generate} disabled={generating}
+            className="btn bg-violet-700 text-white hover:bg-violet-800">
+            {generating ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+            {generating ? 'Menjana…' : 'Jana dengan AI'}
+          </button>
+        </div>
+      )}
+
       <div className="grid gap-4 sm:grid-cols-2">
         {config.fields.map((f) => (
           <label key={f.name} className={`block ${f.full ? 'sm:col-span-2' : ''}`}>
