@@ -35,7 +35,9 @@ npm run dev
 
 ## Deploy (Vercel)
 
-Sambungkan repo ini ke Vercel. Setiap push ke `main` akan deploy ke production secara automatik;
+Laman production: **https://ustp-ppd-kunak.vercel.app**
+
+Repo ini disambung ke Vercel. Setiap push ke `main` akan deploy ke production secara automatik;
 branch lain mendapat Preview URL. Tetapkan env var `VITE_SUPABASE_URL` dan `VITE_SUPABASE_ANON_KEY`
 dalam Vercel → Project → Settings → Environment Variables.
 
