@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
-import { BookOpen, Loader2 } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Award, BookOpen, Loader2 } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
 export default function Login() {
@@ -44,6 +45,9 @@ export default function Login() {
         <p className="mt-5 text-center text-xs text-slate-500">
           Akaun pengguna didaftarkan oleh pentadbir sistem.
         </p>
+        <Link to="/penjurian" className="mt-4 flex items-center justify-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-teal-800 hover:bg-teal-50">
+          <Award size={16} /> Sistem Penjurian Sekolah Daerah Kunak
+        </Link>
       </div>
     </div>
   )

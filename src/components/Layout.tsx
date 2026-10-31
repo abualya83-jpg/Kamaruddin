@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
-import { LayoutDashboard, LogOut, Menu, X } from 'lucide-react'
+import { Award, LayoutDashboard, LogOut, Menu, X } from 'lucide-react'
 import { modules } from '../modules'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
@@ -29,6 +29,9 @@ export default function Layout() {
             <m.icon size={18} /> {m.shortTitle}
           </NavLink>
         ))}
+        <NavLink to="/penjurian" className={linkClass} onClick={() => setOpen(false)}>
+          <Award size={18} /> Sistem Penjurian
+        </NavLink>
       </div>
       <div className="border-t border-teal-800 p-3">
         <p className="truncate px-3 pb-2 text-xs text-teal-200">{session?.user.email}</p>

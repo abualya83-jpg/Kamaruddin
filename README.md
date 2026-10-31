@@ -18,6 +18,44 @@ Web app Unit Sumber dan Teknologi Pendidikan (USTP), Pejabat Pendidikan Daerah K
 
 Dashboard memaparkan program akan datang, tempahan bilik hari ini, pegawai di luar pejabat dan aset lewat dipulangkan.
 
+## Sistem Penjurian Sekolah Daerah Kunak
+
+Sistem penjurian automatik untuk pertandingan peringkat sekolah/daerah, di laluan **`/penjurian`**.
+
+| Peranan | Cara akses | Fungsi |
+|---|---|---|
+| **Super admin** | Log masuk di `/penjurian` | Luluskan / tolak / gantung permohonan admin; pantau semua pertandingan |
+| **Admin pertandingan** | Mohon di `/penjurian/daftar`, guna selepas diluluskan | Cipta pertandingan: nama, rubrik, bilangan juri, pilihan iframe; urus peserta; pantau keputusan langsung |
+| **Juri** | Pautan unik `/juri/<token>` (tiada akaun) | Lihat karya murid (iframe jika dipilih) dan masukkan markah ikut rubrik |
+| **Umum** | `/keputusan/<id>` (jika admin hebahkan) | Papan keputusan langsung untuk skrin besar |
+
+**Aliran:** admin cipta pertandingan → tambah peserta (atau tampal dari Excel) → hantar pautan juri (WhatsApp / kod QR) →
+klik **Buka Penjurian** → juri menilai → markah masuk ke papan keputusan admin **secara realtime** →
+kedudukan (Johan, Naib Johan, Tempat Ketiga) dikira automatik → **Tutup Penjurian** untuk memuktamadkan.
+
+Markah akhir peserta = purata jumlah markah semua juri yang telah menilai. Markah sama berkongsi kedudukan.
+Markah disahkan di server (fungsi `pj_juri_simpan`): setiap kriteria wajib diisi dan mesti dalam julat 0–maks.
+
+Pautan karya YouTube, Google Drive/Docs/Slides, Canva dan Scratch ditukar secara automatik kepada format iframe.
+
+### Setup Sistem Penjurian (sekali sahaja)
+
+1. Jalankan `supabase/migrations/20261031000000_penjurian.sql` dalam Supabase → SQL Editor.
+2. Supabase → Authentication → Sign In / Providers → hidupkan **Allow new users to sign up**
+   (supaya admin pertandingan boleh mendaftar). Tetapkan juga **Site URL** dan **Redirect URLs**
+   (Authentication → URL Configuration) kepada `https://ustp-ppd-kunak.vercel.app`.
+3. Lantik super admin (akaun mesti sudah wujud — staf USTP sedia ada atau daftar di `/penjurian/daftar`):
+   ```sql
+   select public.pj_jadikan_super_admin('emel@moe.gov.my', 'Nama Pegawai');
+   ```
+
+> **Penting — keselamatan data USTP.** Kerana pendaftaran awam dibuka, migration ini mengehadkan semua jadual dan
+> fail USTP kepada pengguna dalam jadual `ustp_akses`. Semua pengguna sedia ada dimasukkan secara automatik.
+> Apabila menambah staf USTP baharu (Authentication → Add user), beri akses dengan:
+> ```sql
+> insert into public.ustp_akses (user_id) select id from auth.users where email = 'staf.baharu@moe.gov.my';
+> ```
+
 ## Jalankan di komputer
 
 ```bash
@@ -30,8 +68,9 @@ npm run dev
 
 1. Jalankan SQL dalam `supabase/migrations/20261030000000_init.sql`
    (Supabase → SQL Editor, atau `supabase db push`). Ini mencipta 7 jadual, polisi RLS dan bucket storan `dokumen`.
+   Jalankan juga migration lain dalam folder yang sama mengikut urutan nama fail.
 2. Daftar pengguna: Supabase → Authentication → Users → **Add user**.
-   Hanya pengguna yang didaftarkan boleh log masuk dan mengakses data.
+   Hanya pengguna dalam jadual `ustp_akses` boleh mengakses data USTP (lihat bahagian Sistem Penjurian).
 
 ## Deploy (Vercel)
 
